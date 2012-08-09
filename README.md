@@ -11,15 +11,13 @@ Usage
 
 In order to ensure that the shell function is available in a shell session add this to your <tt>~/.zshrc</tt>
 
-<code>
-autoload gp
+<code>autoload gp</code>
 
-compctl -f -W ${PASSDIR} gp
-</code>
+<code>compctl -f -W ${PASSDIR} gp</code>
 
 where <tt>${PASSDIR}</tt> is the directory in which you keep your encrypted files.
 
-Then simply run 'gp &lt;name&gt;' to decrypt the file and display its cleartext contents to STDOUT.
+Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file and display its cleartext contents to STDOUT.
 
 Options
 
