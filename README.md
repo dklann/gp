@@ -9,7 +9,7 @@ The shell function includes some git functionality. I use these to track revisio
 
 Initialization
 
-You&rsquo;ll need to create the the <tt>${PASSDIR}</tt> directory and run <tt>git init</tt> in that directory.
+You&rsquo;ll need to create the the <tt>${PASSFILEDIR}</tt> directory and run <tt>git init</tt> in that directory.
 
 Usage
 
@@ -17,9 +17,9 @@ In order to ensure that the shell function is available in a shell session add t
 
 <code>autoload gp</code>
 
-<code>compctl -f -W ${PASSDIR} gp</code>
+<code>compctl -f -W ${PASSFILEDIR} gp</code>
 
-where <tt>${PASSDIR}</tt> is the directory in which you keep your encrypted files.
+where <tt>${PASSFILEDIR}</tt> is the directory in which you keep your encrypted files.
 
 Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file and display its cleartext contents to STDOUT.
 
@@ -34,4 +34,4 @@ Options
       -p|--push:         run 'git push'
       -r|--remove:       remove a file from the password repository
       -s|--status:       run 'git status'
-      --log:             run 'git log --name-status'
+         --log:          run 'git log --name-status'
