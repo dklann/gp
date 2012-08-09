@@ -1,7 +1,6 @@
 gp
 ==
 
-<<<<<<< HEAD
 Create and maintain a passphrase repository with a single ZSH function.
 
 This Z Shell function allows you to create and maintain a directory of GNU Privacy Guard (GPG) encrypted files. The files can contain anything you want, but I use them to track all my collected passwords and passphrases.
@@ -33,6 +32,3 @@ Options
       -r|--remove:       remove a file from the password repository
       -s|--status:       run 'git status'
       --log:             run 'git log --name-status'
-=======
-Create and maintain a passphrase repository with a single ZSH function.
->>>>>>> f915db22d2b77ec4972109914193a823428c57e3
