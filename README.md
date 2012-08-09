@@ -9,16 +9,17 @@ The shell function includes some git functionality. I use these to track revisio
 
 Usage
 
-In order to ensure that the shell function is available in a shell session add this to your ~/.zshrc
+In order to ensure that the shell function is available in a shell session add this to your <tt>~/.zshrc</tt>
 
 <code>
 autoload gp
+
 compctl -f -W ${PASSDIR} gp
 </code>
 
-where $PASSDIR is the directory in which you keep your encrypted files.
+where <tt>${PASSDIR}</tt> is the directory in which you keep your encrypted files.
 
-Then simply run 'gp <name>' to decrypt the file and display its cleartext contents to STDOUT.
+Then simply run 'gp &lt;name&gt;' to decrypt the file and display its cleartext contents to STDOUT.
 
 Options
 
