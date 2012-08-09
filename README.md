@@ -7,6 +7,10 @@ This Z Shell function allows you to create and maintain a directory of GNU Priva
 
 The shell function includes some git functionality. I use these to track revisions and to create a "master" copy of the encrypted files on a remote system. With this, I can keep multiple copies of the files and a simple 'gp --pull' refreshes the local copy with respect to the remote (master).
 
+Initialization
+
+You&rsquo;ll need to create the the <tt>${PASSDIR}</tt> directory and run <tt>git init</tt> in that directory.
+
 Usage
 
 In order to ensure that the shell function is available in a shell session add this to your <tt>~/.zshrc</tt>
