@@ -9,19 +9,18 @@ The shell function includes some git functionality. I use these to track revisio
 
 Initialization
 
-You&rsquo;ll need to create the the <tt>${PASSFILEDIR}</tt> directory and run <tt>git init</tt> in that directory.
+You&rsquo;ll need to create the the <tt>${PASSFILEDIR}</tt> directory and run <tt>git init</tt> in that directory. Initialization of the remote &ldquo;master&rdquo; repository is beyond the scope of this little project (and also not required).
 
 Usage
 
 In order to ensure that the shell function is available in a shell session add this to your <tt>~/.zshrc</tt>
 
 <code>autoload gp</code>
-
 <code>compctl -f -W ${PASSFILEDIR} gp</code>
 
 where <tt>${PASSFILEDIR}</tt> is the directory in which you keep your encrypted files.
 
-Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file and display its cleartext contents to STDOUT.
+Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file &ldquo;name&rdquo; and display its cleartext contents to STDOUT.
 
 Options
 
