@@ -15,7 +15,7 @@ Usage
 
 In order to ensure that the shell function is available in a shell session add this to your <tt>~/.zshrc</tt>
 
-<code>autoload gp</code>
+<code>autoload gp</code><br />
 <code>compctl -f -W ${PASSFILEDIR} gp</code>
 
 where <tt>${PASSFILEDIR}</tt> is the directory in which you keep your encrypted files.
