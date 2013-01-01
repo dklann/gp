@@ -7,7 +7,7 @@ function gp() {
   # set up some defaults
   local RECIPIENT=${USER:-${LOGNAME:-"klann"}}
   local dir=${PASSFILEDIR:-~/lib/p4ss}
-  local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= STATUS=
+  local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= REGEX= SEARCH= STATUS=
   local USEAGENT="--use-agent"
   VISUAL=${VISUAL:-vi}
 
@@ -17,7 +17,7 @@ function gp() {
   # find the executables we need; this uses a little old fashioned shell and
   # a ZSH trick -- the (U) in the eval(1) says to evaluate the parameter as
   # all upper case letters
-  for C in cat chmod git gpg ls mv rm sed touch
+  for C in cat chmod git gpg ls mv pcregrep rm sed touch
   do
     for D in ${path}
     do
@@ -26,7 +26,7 @@ function gp() {
     [ -x $(eval echo \$${(U)C}) ] || { echo "Cannot find ${C}! Done."; return 1 }
   done
 
-  TEMP=$(getopt -o adenglprs --long append,diff,edit,log,new,no-agent,pull,push,remove,status -n "${0:t}" -- "${@}")
+  TEMP=$(getopt -o adenglprst --long append,diff,edit,log,new,no-agent,pull,push,remove,search,status -n "${0:t}" -- "${@}")
   if (( ${?} != 0 )) ; then echo "Terminating..." >&2 ; return 1 ; fi
   # Note the quotes around ${TEMP}: they are essential!
   eval set -- "${TEMP}"
@@ -41,7 +41,8 @@ function gp() {
       -l|--pull) PULL=1 ; PASSFILE=none ; shift ;;
       -p|--push) PUSH=1 ; PASSFILE=none ; shift ;;
       -r|--re*) REMOVE=1 ; shift ;;
-      -s|--st*) STATUS=1 ; PASSFILE=none ; shift ;;
+      -s|--se*) SEARCH=1 ; shift ;;
+      -t|--st*) STATUS=1 ; PASSFILE=none ; shift ;;
       --log) LOG=1 ; PASSFILE=none ; shift ;;
       --) shift ; break ;;
       *) echo "Internal error!" ; return 1 ;;
@@ -212,6 +213,17 @@ EOF
       )
     else
       echo "OK. Not removing ${PASSFILE:t}."
+    fi
+
+  elif (( SEARCH == 1 ))
+  then
+
+    if test -f ${dir}/${PASSFILE:t}
+    then
+      REGEXP="${2:?Search for what\?}"
+
+      ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null | ${PCREGREP} -i "${REGEXP}"
+    else
     fi
 
   elif (( STATUS == 1 ))
