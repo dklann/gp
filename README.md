@@ -32,5 +32,7 @@ Options
       -l|--pull:         run 'git pull'
       -p|--push:         run 'git push'
       -r|--remove:       remove a file from the password repository
-      -s|--status:       run 'git status'
+      -s|--search:       search the named file for the regular expression
+      			 following the filename (watch special characters!)
+      -t|--status:       run 'git status'
          --log:          run 'git log --name-status'
