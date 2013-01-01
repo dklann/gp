@@ -5,11 +5,17 @@
 
 function gp() {
   # set up some defaults
-  local RECIPIENT=${USER:-${LOGNAME:-"klann"}}
+  local RECIPIENT=${USER:-${LOGNAME:-"dklann"}}
   local dir=${PASSFILEDIR:-~/lib/p4ss}
   local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= REGEX= SEARCH= STATUS=
   local USEAGENT="--use-agent"
+  local -a commands
   VISUAL=${VISUAL:-vi}
+  commands=( cat chmod git gpg ls mv pcregrep rm sed touch )
+
+  # this is checked in chpwd() and prevents the window title from
+  # being updated when the cd(1) commands are executed
+  export NO_UPDATE_TITLE=true
 
   zmodload zsh/datetime
 
@@ -17,7 +23,7 @@ function gp() {
   # find the executables we need; this uses a little old fashioned shell and
   # a ZSH trick -- the (U) in the eval(1) says to evaluate the parameter as
   # all upper case letters
-  for C in cat chmod git gpg ls mv pcregrep rm sed touch
+  for C in ${commands}
   do
     for D in ${path}
     do
@@ -260,8 +266,13 @@ EOF
     ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null
 
   fi
-  unset LS GIT GPG CAT TOUCH CHMOD RM
-  unset C D confirm dir f NEW PASSFILE RECIPIENT TEMPFILE tries USEAGENT
+
+  # clean up
+  for C in ${commands}
+  do
+    unset `eval echo ${(U)C}`
+  done
+  unset C D confirm dir f NEW PASSFILE RECIPIENT REGEX TEMPFILE tries USEAGENT
 }
 
 # Local Variables: ***
