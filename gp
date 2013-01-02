@@ -7,7 +7,7 @@ function gp() {
   # set up some defaults
   local RECIPIENT=${USER:-${LOGNAME:-"dklann"}}
   local dir=${PASSFILEDIR:-~/lib/p4ss}
-  local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= REGEX= SEARCH= STATUS=
+  local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= REGEX= STATUS=
   local USEAGENT="--use-agent"
   local -a commands
   VISUAL=${VISUAL:-vi}
@@ -32,7 +32,7 @@ function gp() {
     [ -x $(eval echo \$${(U)C}) ] || { echo "Cannot find ${C}! Done."; return 1 }
   done
 
-  TEMP=$(getopt -o adenglprst --long append,diff,edit,log,new,no-agent,pull,push,remove,search,status -n "${0:t}" -- "${@}")
+  TEMP=$(getopt -o adenglprs --long append,diff,edit,log,new,no-agent,pull,push,remove,status -n "${0:t}" -- "${@}")
   if (( ${?} != 0 )) ; then echo "Terminating..." >&2 ; return 1 ; fi
   # Note the quotes around ${TEMP}: they are essential!
   eval set -- "${TEMP}"
@@ -47,8 +47,7 @@ function gp() {
       -l|--pull) PULL=1 ; PASSFILE=none ; shift ;;
       -p|--push) PUSH=1 ; PASSFILE=none ; shift ;;
       -r|--re*) REMOVE=1 ; shift ;;
-      -s|--se*) SEARCH=1 ; shift ;;
-      -t|--st*) STATUS=1 ; PASSFILE=none ; shift ;;
+      -s|--st*) STATUS=1 ; PASSFILE=none ; shift ;;
       --log) LOG=1 ; PASSFILE=none ; shift ;;
       --) shift ; break ;;
       *) echo "Internal error!" ; return 1 ;;
@@ -221,17 +220,6 @@ EOF
       echo "OK. Not removing ${PASSFILE:t}."
     fi
 
-  elif (( SEARCH == 1 ))
-  then
-
-    if test -f ${dir}/${PASSFILE:t}
-    then
-      REGEXP="${2:?Search for what\?}"
-
-      ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null | ${PCREGREP} -i "${REGEXP}"
-    else
-    fi
-
   elif (( STATUS == 1 ))
   then
 
@@ -242,7 +230,9 @@ EOF
 
   else
 
-    # simply dump the contents of the file
+    # simply dump the contents of the file, and (optionally)
+    # search the output for the string in ARGV[1]
+    REGEX=${2}
     until [ "${PASSFILE:t}" -a -f "${dir}/${PASSFILE:t}" ]
     do
       tries=( $( ${LS} -1 ${dir}/*${PASSFILE:t}* ) )
@@ -262,8 +252,12 @@ EOF
       read PASSFILE\?"No matches. Try another password file name: "
     done
 
-    echo -e "\n	 --	 ${PASSFILE:t} --\n"
-    ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null
+    if [ -n "${REGEX}" ]
+    then
+      ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null | ${PCREGREP} -i "${REGEX}"
+    else
+      ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} 2>/dev/null
+    fi
 
   fi
 
@@ -272,7 +266,8 @@ EOF
   do
     unset `eval echo ${(U)C}`
   done
-  unset C D confirm dir f NEW PASSFILE RECIPIENT REGEX TEMPFILE tries USEAGENT
+  unset APPEND DIFF EDIT LOG NEW PULL PUSH REMOVE REGEX STATUS
+  unset C D confirm dir f PASSFILE RECIPIENT TEMPFILE tries USEAGENT
 }
 
 # Local Variables: ***
