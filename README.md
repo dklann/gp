@@ -20,7 +20,7 @@ In order to ensure that the shell function is available in a shell session add t
 
 where <tt>${PASSFILEDIR}</tt> is the directory in which you keep your encrypted files.
 
-Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file &ldquo;name&rdquo; and display its cleartext contents to STDOUT.
+Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file &ldquo;name&rdquo; and display its cleartext contents to STDOUT. Optionally, type a search string (Perl-compatible regular expression) after &lt;name&gt; (watch the shell special characters).
 
 Options
 
@@ -32,7 +32,5 @@ Options
       -l|--pull:         run 'git pull'
       -p|--push:         run 'git push'
       -r|--remove:       remove a file from the password repository
-      -s|--search:       search the named file for the regular expression
-      			 following the filename (watch special characters!)
       -t|--status:       run 'git status'
          --log:          run 'git log --name-status'
