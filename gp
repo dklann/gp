@@ -13,10 +13,6 @@ function gp() {
   VISUAL=${VISUAL:-vi}
   commands=( cat chmod git gpg ls mv pcregrep rm sed touch )
 
-  # this is checked in chpwd() and prevents the window title from
-  # being updated when the cd(1) commands are executed
-  export NO_UPDATE_TITLE=true
-
   zmodload zsh/datetime
 
   # Overkill:
@@ -89,7 +85,7 @@ EOF
     trap 1 2 11 15 > /dev/null
     ${CHMOD} 400 ${dir}/${PASSFILE:t}
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} add ${PASSFILE:t}
       ${GIT} commit ${PASSFILE:t}
       ${GIT} push
@@ -114,7 +110,7 @@ EOF
       ${CHMOD} 400 ${dir}/${PASSFILE:t}
       # commit the changes
       (
-	cd ${dir}
+	cd -q ${dir}
 	${GIT} add ${PASSFILE:t}
 	# Note: this will open an editor to enable adding a commit log entry
 	${GIT} commit ${PASSFILE:t}
@@ -130,7 +126,7 @@ EOF
   then
 
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} diff
     )
 
@@ -158,7 +154,7 @@ EOF
       ${CHMOD} 400 ${dir}/${PASSFILE:t}
       # commit the changes
       (
-	cd ${dir}
+	cd -q ${dir}
 	${GIT} add ${PASSFILE:t}
 	# Note: this will open an editor to enable adding a commit log entry
 	${GIT} commit ${PASSFILE:t}
@@ -174,7 +170,7 @@ EOF
   then
 
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} log --name-status
     )
 
@@ -182,7 +178,7 @@ EOF
   then
 
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} pull
     )
 
@@ -190,7 +186,7 @@ EOF
   then
 
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} push
     )
 
@@ -208,7 +204,7 @@ EOF
     if [ "${confirm}" = 'y' ]
     then
       (
-	cd ${dir}
+	cd -q ${dir}
 	${CHMOD} 600 ${dir}/${PASSFILE:t}
 	${GIT} rm ${PASSFILE:t}
 	# Note: this will open an editor to enable adding a commit log entry
@@ -224,7 +220,7 @@ EOF
   then
 
     (
-      cd ${dir}
+      cd -q ${dir}
       ${GIT} status
     )
 
