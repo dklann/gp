@@ -8,49 +8,59 @@ function gp() {
   local RECIPIENT=${USER:-${LOGNAME:-"dklann"}}
   local dir=${PASSFILEDIR:-~/lib/p4ss}
   local APPEND= DIFF= EDIT= LOG= NEW= PULL= PUSH= REMOVE= REGEX= STATUS=
+  local PASSFILE=
   local USEAGENT="--use-agent"
   local -a commands
   VISUAL=${VISUAL:-vi}
-  commands=( cat chmod git gpg ls mv pcregrep rm sed touch )
 
   zmodload zsh/datetime
 
-  # Overkill:
-  # find the executables we need; this uses a little old fashioned shell and
-  # a ZSH trick -- the (U) in the eval(1) says to evaluate the parameter as
-  # all upper case letters
-  for C in ${commands}
-  do
-    for D in ${path}
-    do
-      [ -x ${D}/${C} ] && { eval ${(U)C}=${D}/${C} ; break }
-    done
-    [ -x $(eval echo \$${(U)C}) ] || { echo "Cannot find ${C}! Done."; return 1 }
-  done
+  case "_$(uname -s)" in
+    _Linux) GETOPT=getopt ;;
+    _Darwin) GETOPT=/usr/local/bin/getopt ;;
+    _*) GETOPT=getopt ;;
+  esac
 
-  TEMP=$(getopt -o adenglprs --long append,diff,edit,log,new,no-agent,pull,push,remove,status -n "${0:t}" -- "${@}")
+  ################### BEGIN shell commands used in this script. ###################
+  # This script uses these 10 external commands.
+  # Look for them in their upper case, parameter expanded form.
+  typeset -a our_commands
+  our_commands=( cat chmod git gpg ls mv pcregrep rm sed touch )
+  # Find the executables we need; this uses a little old fashioned shell and
+  # a ZSH trick -- the (U) in the eval(1) says to evaluate the parameter as
+  # all upper case letters. We will use the command names in upper case as
+  # variables by which to call the external commands used in this script.
+  for C in "${our_commands}" ; do
+    for D in "${path}" ; do
+      [[ -x "${D}/${C}" ]] && { eval "${(U)C//-/_}"="${D}/${C}" ; break }
+    done
+    [[ -x $(eval print \$${(U)C//-/_}) ]] || { print "Cannot find ${C}! Done."; return 1 }
+  done
+  #################### END shell commands used in this script. ####################
+
+  TEMP=$(${GETOPT} -o adenglprs --long append,diff,edit,log,new,no-agent,pull,push,remove,status -n "${0:t}" -- "${@}")
   if (( ${?} != 0 )) ; then echo "Terminating..." >&2 ; return 1 ; fi
   # Note the quotes around ${TEMP}: they are essential!
   eval set -- "${TEMP}"
   while :
   do
     case "${1}" in
-      -a|--ap*) APPEND=1 ; shift ;;
-      -e|--ed*) EDIT=1 ; shift ;;
-      -d|--di*) DIFF=1 ; PASSFILE=none ; shift ;;
-      -n|--ne*) NEW=1 ; shift ;;
-      -g|--no*) USEAGENT="--no-use-agent" ; shift ;;
-      -l|--pull) PULL=1 ; PASSFILE=none ; shift ;;
-      -p|--push) PUSH=1 ; PASSFILE=none ; shift ;;
-      -r|--re*) REMOVE=1 ; shift ;;
-      -s|--st*) STATUS=1 ; PASSFILE=none ; shift ;;
+      -a|--app*) APPEND=1 ; shift ;;
+      -e|--edi*) EDIT=1 ; shift ;;
+      -d|--dif*) DIFF=1 ; PASSFILE=none ; shift ;;
+      -n|--new*) NEW=1 ; shift ;;
+      -g|--no-*) USEAGENT="--no-use-agent" ; shift ;;
+      -l|--pul*) PULL=1 ; PASSFILE=none ; shift ;;
+      -p|--pus*) PUSH=1 ; PASSFILE=none ; shift ;;
+      -r|--rem*) REMOVE=1 ; shift ;;
+      -s|--sta*) STATUS=1 ; PASSFILE=none ; shift ;;
       --log) LOG=1 ; PASSFILE=none ; shift ;;
       --) shift ; break ;;
       *) echo "Internal error!" ; return 1 ;;
       esac
   done
 
-  PASSFILE=${PASSFILE:-${1:?"for whom does the bell toll?"}}
+  PASSFILE=${PASSFILE:-${1:?"Really? You want to work on a password file without saying which one?"}}
   TEMPFILE=/tmp/gp-X0-pass${$}
   TEMPFILE2=/tmp/gp-X1-pass${$}
   trap "${RM} -f ${TEMPFILE} ${TEMPFILE2}; return" 0
@@ -133,11 +143,11 @@ EOF
   elif (( EDIT == 1 ))
   then
 
-    if ${GPG} --quiet --use-agent < ${dir}/${PASSFILE:t} > ${TEMPFILE}
+    if ${GPG} --quiet ${USEAGENT} < ${dir}/${PASSFILE:t} > ${TEMPFILE}
     then
 
       # purge headers (first expression) and the blank separator line (second expression)
-      ${SED} -e '/^X-.*:[[:space:]]/d' -e 1,1d < ${TEMPFILE} > ${TEMPFILE2} && mv ${TEMPFILE2} ${TEMPFILE}
+      ${SED} -e '/^X-.*:[[:space:]]/d' -e 1,1d < ${TEMPFILE} > ${TEMPFILE2} && ${MV} ${TEMPFILE2} ${TEMPFILE}
       # edit the file
       ${VISUAL} ${TEMPFILE}
       # prepend new headers to the edited file
@@ -265,7 +275,6 @@ EOF
   unset APPEND DIFF EDIT LOG NEW PULL PUSH REMOVE REGEX STATUS
   unset C D confirm dir f PASSFILE RECIPIENT TEMPFILE tries USEAGENT
 }
-
 # Local Variables: ***
 # mode:shell-script ***
 # indent-tabs-mode: f ***
