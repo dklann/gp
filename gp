@@ -21,22 +21,22 @@ function gp() {
     _*) GETOPT=getopt ;;
   esac
 
-  ################### BEGIN shell commands used in this script. ###################
-  # This script uses these 10 external commands.
+  ################## BEGIN shell commands used in this function. ##################
+  # This function uses these 10 external commands.
   # Look for them in their upper case, parameter expanded form.
   typeset -a our_commands
   our_commands=( cat chmod git gpg ls mv pcregrep rm sed touch )
   # Find the executables we need; this uses a little old fashioned shell and
   # a ZSH trick -- the (U) in the eval(1) says to evaluate the parameter as
   # all upper case letters. We will use the command names in upper case as
-  # variables by which to call the external commands used in this script.
+  # variables by which to call the external commands used in this function.
   for C in "${our_commands}" ; do
     for D in "${path}" ; do
       [[ -x "${D}/${C}" ]] && { eval "${(U)C//-/_}"="${D}/${C}" ; break }
     done
     [[ -x $(eval print \$${(U)C//-/_}) ]] || { print "Cannot find ${C}! Done."; return 1 }
   done
-  #################### END shell commands used in this script. ####################
+  ################### END shell commands used in this function. ###################
 
   TEMP=$(${GETOPT} -o adenglprs --long append,diff,edit,log,new,no-agent,pull,push,remove,status -n "${0:t}" -- "${@}")
   if (( ${?} != 0 )) ; then echo "Terminating..." >&2 ; return 1 ; fi
