@@ -25,8 +25,10 @@ Then simply run <tt>gp &lt;name&gt;</tt> to decrypt the file &ldquo;name&rdquo; 
 Options
 
       -a|--append:       append to an existing file
+      -c|--copy|--clip:  copy the specified field to the X selection clipboard
       -e|--edit:         edit an existing file with ${EDITOR}
       -d|--diff:         run 'git diff' on the whole repo
+      -h|--help:         display a helpful usage message
       -n|--new:          create a new encrypted file
       -g|--no-use-agent: do not use the GPG agent
       -l|--pull:         run 'git pull'
